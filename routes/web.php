@@ -14,6 +14,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $contacts = App\Contact::all();
-    return view('welcome', ['contacts' => $contacts]);
+    return "root";
 });
