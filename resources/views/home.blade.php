@@ -6,7 +6,7 @@
 <h1 class="mb4">Posts</h1>
 
 @forelse($posts as $post)
-<div class="pa2 mb3 striped--near-white">
+<div class="ph3 pv4 striped--near-white">
     <header class="b mb2">{{ $post->author }}</header>
     <div class="pl2">
         <p class="mb2">{{ $post->body }}</p>
