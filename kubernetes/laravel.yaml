@@ -1,0 +1,102 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contacts-app-fpm
+  labels:
+    app.kubernetes.io/name: contacts-app-fpm
+    app.kubernetes.io/component: fpm
+    app.kubernetes.io/part-of: contacts-app
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: contacts-app-fpm
+      app.kubernetes.io/component: fpm
+      app.kubernetes.io/part-of: contacts-app
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: contacts-app-fpm
+        app.kubernetes.io/component: fpm
+        app.kubernetes.io/part-of: contacts-app
+    spec:
+      containers:
+        - name: contacts-app-fpm
+          image: registry.digitalocean.com/shark-fyi/contacts-app-php:latest
+          ports:
+            - containerPort: 9000
+          volumeMounts:
+            - name: dot-env
+              mountPath: /app/.env
+              subPath: .env
+              readOnly: true
+      volumes:
+        - name: dot-env
+          secret:
+            secretName: contacts-app
+
+      imagePullSecrets:
+        - name: registry-shark-fyi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contacts-app-nginx
+  labels:
+    app.kubernetes.io/name: contacts-app-nginx
+    app.kubernetes.io/component: nginx
+    app.kubernetes.io/part-of: contacts-app
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: contacts-app-nginx
+      app.kubernetes.io/component: nginx
+      app.kubernetes.io/part-of: contacts-app
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: contacts-app-nginx
+        app.kubernetes.io/component: nginx
+        app.kubernetes.io/part-of: contacts-app
+    spec:
+      containers:
+        - name: contacts-app-nginx
+          image: registry.digitalocean.com/shark-fyi/contacts-app-nginx:latest
+          ports:
+            - containerPort: 80
+      imagePullSecrets:
+        - name: registry-shark-fyi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: contacts-app-fpm
+spec:
+  selector:
+    app.kubernetes.io/name: contacts-app-fpm
+    app.kubernetes.io/component: fpm
+    app.kubernetes.io/part-of: contacts-app
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: contacts-app-nginx
+spec:
+  selector:
+    app.kubernetes.io/name: contacts-app-nginx
+    app.kubernetes.io/component: nginx
+    app.kubernetes.io/part-of: contacts-app
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
