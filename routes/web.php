@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return "root";
+Route::get('/', 'HomeController@index')->name('home');
+Route::name('auth.')->prefix('auth')->group(function() {
+    Route::get('/login', function() {
+        return 'log in';
+    })->name('login');
 });
