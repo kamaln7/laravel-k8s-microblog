@@ -31,10 +31,10 @@ spec:
               mountPath: /app/.env
               subPath: .env
               readOnly: true
-          resources:
-            requests:
-              memory: 250Mi
-              cpu: 250m
+          # resources:
+          #   requests:
+          #     memory: 250Mi
+          #     cpu: 250m
       volumes:
         - name: dot-env
           secret:
@@ -71,10 +71,57 @@ spec:
           image: registry.digitalocean.com/shark-fyi/contacts-app-nginx:latest
           ports:
             - containerPort: 80
-          resources:
-            requests:
-              memory: 250Mi
-              cpu: 250m
+          # resources:
+          #   requests:
+          #     memory: 250Mi
+          #     cpu: 250m
+      imagePullSecrets:
+        - name: registry-shark-fyi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contacts-app-horizon
+  labels:
+    app.kubernetes.io/name: contacts-app-horizon
+    app.kubernetes.io/component: horizon
+    app.kubernetes.io/part-of: contacts-app
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: contacts-app-horizon
+      app.kubernetes.io/component: horizon
+      app.kubernetes.io/part-of: contacts-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: contacts-app-horizon
+        app.kubernetes.io/component: horizon
+        app.kubernetes.io/part-of: contacts-app
+    spec:
+      containers:
+        - name: contacts-app-horizon
+          image: registry.digitalocean.com/shark-fyi/contacts-app-php:latest
+          command:
+            - php
+            - artisan
+            - horizon
+          volumeMounts:
+            - name: dot-env
+              mountPath: /app/.env
+              subPath: .env
+              readOnly: true
+          # resources:
+          #   requests:
+          #     memory: 250Mi
+          #     cpu: 250m
+      volumes:
+        - name: dot-env
+          secret:
+            secretName: contacts-app
+
       imagePullSecrets:
         - name: registry-shark-fyi
 

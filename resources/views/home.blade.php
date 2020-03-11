@@ -12,6 +12,7 @@
     <a class="link f5 black dim b" href="{{ route('posts.create') }}">✍️ Write a Post</a>
 </div>
 
+<div>
 @forelse($posts as $post)
 <div class="ph3 pv4 striped--near-white flex">
     <div class="flex-grow-1 mr2">
@@ -29,5 +30,6 @@
 @empty
 <p>There are no posts on this micro-blog yet :(</p>
 @endforelse
+</div>
 
 @endsection

@@ -33,10 +33,29 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
      */
     protected function gate()
     {
-        Gate::define('viewHorizon', function ($user) {
-            return in_array($user->email, [
-                //
-            ]);
+        Gate::define('viewHorizon', function ($user = null) {
+            // HTTP Basic auth for Horizon
+            $horizon_key = env('HORIZON_KEY');
+            if (!$horizon_key) {
+                return false;
+            }
+
+            $username = $_SERVER['PHP_AUTH_USER'] ?? '';
+            $password = $_SERVER['PHP_AUTH_PW'] ?? '';
+
+            if (
+                $username == ''
+                || $password == ''
+                || $username != $horizon_key
+                || $password != $horizon_key
+                ) {
+                header('WWW-Authenticate: Basic realm="Protected Area"');
+                header('HTTP/1.0 401 Unauthorized');
+                
+                exit;
+            }
+
+            return true;
         });
     }
 }

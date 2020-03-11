@@ -17,8 +17,9 @@ RUN apk add --no-cache \
     libmcrypt-dev \
     libxml2-dev
 
-RUN pecl install mcrypt-1.0.1 \
+RUN pecl install mcrypt-1.0.1 redis-5.2.0 \
     && docker-php-ext-enable mcrypt \
+    && docker-php-ext-enable redis \
     && docker-php-ext-install pcntl \
     && docker-php-ext-install pdo pdo_mysql \
     && docker-php-ext-install bcmath
@@ -27,4 +28,5 @@ WORKDIR /app
 
 COPY . .
 COPY --from=composer /app/vendor ./vendor
-RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
+RUN mkdir -p ./storage/app ./storage/framework ./storage/logs ./bootstrap/cache ./storage/app/public ./storage/app ./storage/framework/cache ./storage/framework/cache/data ./storage/framework/testing ./storage/framework/sessions ./storage/framework ./storage/framework/views ./storage/logs
+RUN chown -R www-data:www-data ./storage ./bootstrap/cache
