@@ -46,7 +46,7 @@ class AttachPhotoToPost implements ShouldQueue
         // get a random photo from picsum
         $url = "https://picsum.photos/seed/{$hash}/128";
         $image = file_get_contents($url);
-        Storage::put($filename, $image);
+        Storage::put($filename, $image, 'public');
         
         // store the new photo in the database
         $this->post->photo = $filename;

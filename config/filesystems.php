@@ -64,6 +64,16 @@ return [
             'url' => env('AWS_URL'),
         ],
 
+        'spaces' => [
+            'driver' => 's3',
+            'key' => env('SPACES_ACCESS_KEY'),
+            'secret' => env('SPACES_SECRET_KEY'),
+            'region' => env('SPACES_REGION'),
+            'bucket' => env('SPACES_SPACE'),
+            'url' => env('SPACES_URL'),
+            'endpoint' => "https://" . env('SPACES_REGION') . ".digitaloceanspaces.com",
+        ],
+
     ],
 
     /*
