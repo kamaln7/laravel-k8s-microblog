@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>@yield('title') - {{ env('APP_NAME') }}</title>
-        <link rel="stylesheet" href="{{ asset('css/tachyons.min.css') }}"/>
+        <link rel="stylesheet" href="{{ mix('/css/app.css') }}"/>
     </head>
     <body>
         <div class="mw7 center pa3 sans-serif">
