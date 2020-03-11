@@ -24,12 +24,12 @@ class AuthController extends Controller
             'username' => $username,
         ]);
 
-        return back();
+        return redirect()->route('home')->with('alert', "Logged in as {$username}!");
     }
 
     function logout() {
         session()->forget('username');
 
-        return redirect()->route('home');
+        return redirect()->route('home')->with('alert', 'Logged out.');
     }
 }

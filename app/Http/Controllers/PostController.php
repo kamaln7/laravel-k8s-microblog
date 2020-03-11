@@ -35,6 +35,6 @@ class PostController extends Controller
             'body' => $body,
         ]);
 
-        return redirect()->route('home');
+        return redirect()->route('home')->with('alert', 'Post created!');
     }
 }

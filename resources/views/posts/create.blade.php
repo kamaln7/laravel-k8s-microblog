@@ -8,13 +8,13 @@
 <div class="ph3 pv4">
     <form method="POST" action="{{ route('posts.store') }}">
         @csrf
-        <div class="measure-narrow">
+        <div class="measure">
             <div class="mb3">
                 @error('body')
                     <p class="orange">{{ $message }}</p>
                 @enderror
                 <label for="body" class="f6 b db mb2">Body</label>
-                <textarea class="input-reset ba b--black-20 pa2 mb2 db w-100" name="body" id="body" aria-describedby="body-desc"></textarea>
+                <textarea class="input-reset ba b--black-20 pa2 mb2 db w-100 h4" name="body" id="body" aria-describedby="body-desc"></textarea>
                 <small id="body-desc" class="f6 lh-copy black-60 db mb2">
                 You are posting as <span class="b">{{ session('username') }}</span>
                 </small>

@@ -2,15 +2,19 @@
 
 @section('title', 'Home')
 
-@section('content')
+@section('header')
 <h1 class="mb4">Posts</h1>
+@endsection
 
-<div>
-    <a class="link dim f5 black underline b" href="{{ route('posts.create') }}">Write a Post</a>
+@section('content')
+
+<div class="mb3">
+    <a class="link f5 black dim b" href="{{ route('posts.create') }}">✍️ Write a Post</a>
 </div>
+
 @forelse($posts as $post)
 <div class="ph3 pv4 striped--near-white">
-    <header class="b mb2">{{ $post->author }}</header>
+    <header class="mb2"><span class="b pr2">{{ $post->author }}</span> {{ $post->created_at->diffForHumans() }}</header>
     <div class="pl2">
         <p class="mb2">{{ $post->body }}</p>
     </div>

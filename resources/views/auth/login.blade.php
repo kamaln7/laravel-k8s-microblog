@@ -2,8 +2,11 @@
 
 @section('title', 'Login')
 
-@section('content')
+@section('header')
 <h1 class="mb3">Login</h1>
+@endsection
+
+@section('content')
 
 <div class="ph3 pv4">
     <form method="POST" action="{{ route('auth.login') }}">

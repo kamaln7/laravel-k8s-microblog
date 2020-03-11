@@ -10,6 +10,14 @@
     <body>
         <div class="mw7 center pa3 sans-serif">
             @include('partials/nav')
+            @yield('header')
+
+            @if (session('alert'))
+                <div class="dark-green bg-washed-green pv3 ph4 mb4">
+                    {{ session('alert') }}
+                </div>
+            @endif
+
             @yield('content')
         </div>
     </body>
