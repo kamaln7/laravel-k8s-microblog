@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Post;
 use Illuminate\Http\Request;
+
+use App\Post;
+use App\Jobs\AttachPhotoToPost;
 
 class PostController extends Controller
 {
@@ -30,10 +32,14 @@ class PostController extends Controller
         ]);
 
         $body = $request->input('body');
-        Post::create([
+        $post = Post::create([
             'author' => session('username'),
             'body' => $body,
         ]);
+
+        if ($request->boolean('attachPhoto')) {
+            AttachPhotoToPost::dispatch($post);
+        }
 
         return redirect()->route('home')->with('alert', 'Post created!');
     }

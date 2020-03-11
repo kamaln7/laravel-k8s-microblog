@@ -20,6 +20,11 @@
                 </small>
             </div>
 
+            <div class="flex items-center mb3">
+                <input class="mr2" type="checkbox" id="attachPhoto" name="attachPhoto" value="true" checked>
+                <label for="attachPhoto" class="lh-copy">Attach a random photo</label>
+            </div>
+
             <div class="mb3">
                 <button type="submit" class="b ph3 pv2 input-reset ba b--black bg-transparent pointer f6 dib">Save Post</button>
             </div>

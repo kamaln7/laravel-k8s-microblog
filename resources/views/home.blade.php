@@ -13,10 +13,17 @@
 </div>
 
 @forelse($posts as $post)
-<div class="ph3 pv4 striped--near-white">
-    <header class="mb2"><span class="b pr2">{{ $post->author }}</span> {{ $post->created_at->diffForHumans() }}</header>
-    <div class="pl2">
-        <p class="mb2">{{ $post->body }}</p>
+<div class="ph3 pv4 striped--near-white flex">
+    <div class="flex-grow-1 mr2">
+        <header class="mb2"><span class="b pr2">{{ $post->author }}</span> {{ $post->created_at->diffForHumans() }}</header>
+        <div class="pl2">
+            <p class="mb2">{{ $post->body }}</p>
+        </div>
+    </div>
+    <div class="flex-shrink-0">
+        @if($post->photo)
+            <img src="{{ Storage::url($post->photoFilename()) }}" style="width: 96px" class="br-100 pa1 ba b--black-10">
+        @endif
     </div>
 </div>
 @empty
