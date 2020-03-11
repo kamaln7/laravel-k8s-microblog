@@ -5,6 +5,9 @@
 @section('content')
 <h1 class="mb4">Posts</h1>
 
+<div>
+    <a class="link dim f5 black underline b" href="{{ route('posts.create') }}">Write a Post</a>
+</div>
 @forelse($posts as $post)
 <div class="ph3 pv4 striped--near-white">
     <header class="b mb2">{{ $post->author }}</header>
