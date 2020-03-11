@@ -51,5 +51,7 @@ class AttachPhotoToPost implements ShouldQueue
         // store the new photo in the database
         $this->post->photo = $filename;
         $this->post->save();
+
+        info("Attached photo [{$url}] to Post #{$this->post->id}.");
     }
 }
