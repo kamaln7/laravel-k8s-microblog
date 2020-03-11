@@ -31,6 +31,10 @@ spec:
               mountPath: /app/.env
               subPath: .env
               readOnly: true
+          resources:
+            requests:
+              memory: "250Mi"
+              cpu: "250m"
       volumes:
         - name: dot-env
           secret:
@@ -67,6 +71,10 @@ spec:
           image: registry.digitalocean.com/shark-fyi/contacts-app-nginx:latest
           ports:
             - containerPort: 80
+          resources:
+            requests:
+              memory: "250Mi"
+              cpu: "250m"
       imagePullSecrets:
         - name: registry-shark-fyi
 

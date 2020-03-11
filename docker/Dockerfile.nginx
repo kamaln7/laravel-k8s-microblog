@@ -1,5 +1,18 @@
+# run laravel mix to compile assets
+FROM node:13-alpine AS node
+
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm install
+
+COPY webpack.mix.js ./
+COPY resources ./resources
+COPY public ./public
+
+RUN npm run production
+
+# final nginx image
 FROM nginx:mainline-alpine
 
 COPY docker/nginx.default.conf /etc/nginx/conf.d/default.conf
-COPY public /app/public
-
+COPY --from=node /app/public /app/public
