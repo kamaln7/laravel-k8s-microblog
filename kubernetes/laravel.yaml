@@ -2,28 +2,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: contacts-app-fpm
+  name: microblog-fpm
   labels:
-    app.kubernetes.io/name: contacts-app-fpm
+    app.kubernetes.io/name: microblog-fpm
     app.kubernetes.io/component: fpm
-    app.kubernetes.io/part-of: contacts-app
+    app.kubernetes.io/part-of: microblog
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: contacts-app-fpm
+      app.kubernetes.io/name: microblog-fpm
       app.kubernetes.io/component: fpm
-      app.kubernetes.io/part-of: contacts-app
+      app.kubernetes.io/part-of: microblog
   replicas: 3
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: contacts-app-fpm
+        app.kubernetes.io/name: microblog-fpm
         app.kubernetes.io/component: fpm
-        app.kubernetes.io/part-of: contacts-app
+        app.kubernetes.io/part-of: microblog
     spec:
       containers:
-        - name: contacts-app-fpm
-          image: registry.digitalocean.com/shark-fyi/contacts-app-php:latest
+        - name: microblog-fpm
+          image: registry.digitalocean.com/shark-fyi/microblog-php:latest
           ports:
             - containerPort: 9000
           volumeMounts:
@@ -38,7 +38,7 @@ spec:
       volumes:
         - name: dot-env
           secret:
-            secretName: contacts-app
+            secretName: microblog
 
       imagePullSecrets:
         - name: registry-shark-fyi
@@ -47,34 +47,42 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: contacts-app-nginx
+  name: microblog-nginx
   labels:
-    app.kubernetes.io/name: contacts-app-nginx
+    app.kubernetes.io/name: microblog-nginx
     app.kubernetes.io/component: nginx
-    app.kubernetes.io/part-of: contacts-app
+    app.kubernetes.io/part-of: microblog
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: contacts-app-nginx
+      app.kubernetes.io/name: microblog-nginx
       app.kubernetes.io/component: nginx
-      app.kubernetes.io/part-of: contacts-app
+      app.kubernetes.io/part-of: microblog
   replicas: 3
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: contacts-app-nginx
+        app.kubernetes.io/name: microblog-nginx
         app.kubernetes.io/component: nginx
-        app.kubernetes.io/part-of: contacts-app
+        app.kubernetes.io/part-of: microblog
     spec:
       containers:
-        - name: contacts-app-nginx
-          image: registry.digitalocean.com/shark-fyi/contacts-app-nginx:latest
+        - name: microblog-nginx
+          image: registry.digitalocean.com/shark-fyi/microblog-nginx:latest
           ports:
             - containerPort: 80
           # resources:
           #   requests:
           #     memory: 250Mi
           #     cpu: 250m
+          livenessProbe:
+            httpGet:
+              path: /healthz/nginx
+              port: 80
+          readinessProbe:
+            httpGet:
+              path: /healthz/laravel
+              port: 80
       imagePullSecrets:
         - name: registry-shark-fyi
 
@@ -82,28 +90,28 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: contacts-app-horizon
+  name: microblog-horizon
   labels:
-    app.kubernetes.io/name: contacts-app-horizon
+    app.kubernetes.io/name: microblog-horizon
     app.kubernetes.io/component: horizon
-    app.kubernetes.io/part-of: contacts-app
+    app.kubernetes.io/part-of: microblog
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: contacts-app-horizon
+      app.kubernetes.io/name: microblog-horizon
       app.kubernetes.io/component: horizon
-      app.kubernetes.io/part-of: contacts-app
+      app.kubernetes.io/part-of: microblog
   replicas: 1
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: contacts-app-horizon
+        app.kubernetes.io/name: microblog-horizon
         app.kubernetes.io/component: horizon
-        app.kubernetes.io/part-of: contacts-app
+        app.kubernetes.io/part-of: microblog
     spec:
       containers:
-        - name: contacts-app-horizon
-          image: registry.digitalocean.com/shark-fyi/contacts-app-php:latest
+        - name: microblog-horizon
+          image: registry.digitalocean.com/shark-fyi/microblog-php:latest
           command:
             - php
             - artisan
@@ -120,7 +128,7 @@ spec:
       volumes:
         - name: dot-env
           secret:
-            secretName: contacts-app
+            secretName: microblog
 
       imagePullSecrets:
         - name: registry-shark-fyi
@@ -129,12 +137,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: contacts-app-fpm
+  name: microblog-fpm
 spec:
   selector:
-    app.kubernetes.io/name: contacts-app-fpm
+    app.kubernetes.io/name: microblog-fpm
     app.kubernetes.io/component: fpm
-    app.kubernetes.io/part-of: contacts-app
+    app.kubernetes.io/part-of: microblog
   ports:
     - protocol: TCP
       port: 9000
@@ -144,12 +152,17 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: contacts-app-nginx
+  name: microblog-nginx
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-port: "80"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-path: "/healthz/laravel"
 spec:
   selector:
-    app.kubernetes.io/name: contacts-app-nginx
+    app.kubernetes.io/name: microblog-nginx
     app.kubernetes.io/component: nginx
-    app.kubernetes.io/part-of: contacts-app
+    app.kubernetes.io/part-of: microblog
   type: LoadBalancer
   ports:
     - protocol: TCP

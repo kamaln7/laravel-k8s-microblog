@@ -37,10 +37,12 @@ class PostController extends Controller
             'body' => $body,
         ]);
 
+        $alert = 'Post created!';
         if ($request->boolean('attachPhoto')) {
             AttachPhotoToPost::dispatch($post);
+            $alert .= ' Photo attachment scheduled, check in a couple of seconds.';
         }
 
-        return redirect()->route('home')->with('alert', 'Post created!');
+        return redirect()->route('home')->with('alert', $alert);
     }
 }

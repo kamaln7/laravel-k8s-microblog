@@ -22,3 +22,7 @@ Route::name('auth.')->prefix('auth')->group(function() {
 Route::resource('posts', 'PostController')->only([
     'create', 'store'
 ])->middleware('auth');
+
+Route::get('/healthz/laravel', function() {
+    return 'OK';
+});
