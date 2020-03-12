@@ -5,6 +5,8 @@
 /vendor
 .env
 .env.*
+!.env.k8s.example
+!.env.dev.example
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
