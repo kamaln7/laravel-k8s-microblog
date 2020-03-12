@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: microblog-migrate
+  labels:
+    app.kubernetes.io/name: microblog-migrate
+    app.kubernetes.io/component: migrate
+    app.kubernetes.io/part-of: microblog
+spec:
+  restartPolicy: Never
+  containers:
+    - name: microblog-migrate
+      image: registry.digitalocean.com/shark-fyi/microblog-php:latest
+      command:
+        - php
+        - artisan
+        - migrate
+        - --force
+      volumeMounts:
+        - name: dot-env
+          mountPath: /app/.env
+          subPath: .env
+          readOnly: true
+  volumes:
+    - name: dot-env
+      secret:
+        secretName: microblog
+  imagePullSecrets:
+    - name: registry-shark-fyi

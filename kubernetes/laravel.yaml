@@ -39,7 +39,6 @@ spec:
         - name: dot-env
           secret:
             secretName: microblog
-
       imagePullSecrets:
         - name: registry-shark-fyi
 
@@ -129,7 +128,6 @@ spec:
         - name: dot-env
           secret:
             secretName: microblog
-
       imagePullSecrets:
         - name: registry-shark-fyi
 
@@ -168,3 +166,44 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
+
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: microblog-scheduler
+  labels:
+    app.kubernetes.io/name: microblog-scheduler
+    app.kubernetes.io/component: scheduler
+    app.kubernetes.io/part-of: microblog
+spec:
+  schedule: "* * * * *"
+  failedJobsHistoryLimit: 10
+  successfulJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: microblog-horizon
+              image: registry.digitalocean.com/shark-fyi/microblog-php:latest
+              command:
+                - php
+                - artisan
+                - schedule:run
+              volumeMounts:
+                - name: dot-env
+                  mountPath: /app/.env
+                  subPath: .env
+                  readOnly: true
+              # resources:
+              #   requests:
+              #     memory: 250Mi
+              #     cpu: 250m
+          volumes:
+            - name: dot-env
+              secret:
+                secretName: microblog
+          imagePullSecrets:
+            - name: registry-shark-fyi
