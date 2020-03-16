@@ -46,7 +46,10 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapWebRoutes();
 
-        //
+        
+        Route::get('/healthz/laravel', function() {
+            return 'OK';
+        });
     }
 
     /**
