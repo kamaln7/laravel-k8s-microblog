@@ -26,7 +26,7 @@ RUN pecl install mcrypt-1.0.1 redis-5.2.0 \
 
 WORKDIR /app
 
-COPY . .
 COPY --from=composer /app/vendor ./vendor
+COPY . .
 RUN mkdir -p ./storage/app ./storage/framework ./storage/logs ./bootstrap/cache ./storage/app/public ./storage/app ./storage/framework/cache ./storage/framework/cache/data ./storage/framework/testing ./storage/framework/sessions ./storage/framework ./storage/framework/views ./storage/logs
 RUN chown -R www-data:www-data ./storage ./bootstrap/cache
