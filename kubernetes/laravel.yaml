@@ -97,7 +97,7 @@ metadata:
     service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
     service.beta.kubernetes.io/do-loadbalancer-healthcheck-port: "80"
     service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol: "http"
-    service.beta.kubernetes.io/do-loadbalancer-healthcheck-path: "/healthz/laravel"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-path: "/healthz/nginx"
 spec:
   selector:
     app.kubernetes.io/name: microblog-nginx
