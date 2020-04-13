@@ -2,50 +2,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: microblog-fpm
-  labels:
-    app.kubernetes.io/name: microblog-fpm
-    app.kubernetes.io/component: fpm
-    app.kubernetes.io/part-of: microblog
-spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: microblog-fpm
-      app.kubernetes.io/component: fpm
-      app.kubernetes.io/part-of: microblog
-  replicas: 3
-  template:
-    metadata:
-      labels:
-        app.kubernetes.io/name: microblog-fpm
-        app.kubernetes.io/component: fpm
-        app.kubernetes.io/part-of: microblog
-    spec:
-      containers:
-        - name: microblog-fpm
-          image: registry.digitalocean.com/shark-fyi/microblog-php:latest
-          ports:
-            - containerPort: 9000
-          volumeMounts:
-            - name: dot-env
-              mountPath: /app/.env
-              subPath: .env
-              readOnly: true
-          # resources:
-          #   requests:
-          #     memory: 250Mi
-          #     cpu: 250m
-      volumes:
-        - name: dot-env
-          secret:
-            secretName: microblog
-      imagePullSecrets:
-        - name: registry-shark-fyi
-
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
   name: microblog-nginx
   labels:
     app.kubernetes.io/name: microblog-nginx
@@ -57,7 +13,7 @@ spec:
       app.kubernetes.io/name: microblog-nginx
       app.kubernetes.io/component: nginx
       app.kubernetes.io/part-of: microblog
-  replicas: 3
+  replicas: 1
   template:
     metadata:
       labels:
@@ -66,21 +22,13 @@ spec:
         app.kubernetes.io/part-of: microblog
     spec:
       containers:
-        - name: microblog-nginx
+        - name: nginx
           image: registry.digitalocean.com/shark-fyi/microblog-nginx:latest
           ports:
             - containerPort: 80
-          # resources:
-          #   requests:
-          #     memory: 250Mi
-          #     cpu: 250m
-          livenessProbe:
-            httpGet:
-              path: /healthz/nginx
-              port: 80
           readinessProbe:
             httpGet:
-              path: /healthz/laravel
+              path: /healthz/nginx
               port: 80
       imagePullSecrets:
         - name: registry-shark-fyi
@@ -89,41 +37,35 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: microblog-horizon
+  name: microblog-fpm
   labels:
-    app.kubernetes.io/name: microblog-horizon
-    app.kubernetes.io/component: horizon
+    app.kubernetes.io/name: microblog-fpm
+    app.kubernetes.io/component: fpm
     app.kubernetes.io/part-of: microblog
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: microblog-horizon
-      app.kubernetes.io/component: horizon
+      app.kubernetes.io/name: microblog-fpm
+      app.kubernetes.io/component: fpm
       app.kubernetes.io/part-of: microblog
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: microblog-horizon
-        app.kubernetes.io/component: horizon
+        app.kubernetes.io/name: microblog-fpm
+        app.kubernetes.io/component: fpm
         app.kubernetes.io/part-of: microblog
     spec:
       containers:
-        - name: microblog-horizon
+        - name: fpm
           image: registry.digitalocean.com/shark-fyi/microblog-php:latest
-          command:
-            - php
-            - artisan
-            - horizon
+          ports:
+            - containerPort: 9000
           volumeMounts:
             - name: dot-env
               mountPath: /app/.env
               subPath: .env
               readOnly: true
-          # resources:
-          #   requests:
-          #     memory: 250Mi
-          #     cpu: 250m
       volumes:
         - name: dot-env
           secret:
@@ -168,6 +110,48 @@ spec:
       targetPort: 80
 
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microblog-horizon
+  labels:
+    app.kubernetes.io/name: microblog-horizon
+    app.kubernetes.io/component: horizon
+    app.kubernetes.io/part-of: microblog
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: microblog-horizon
+      app.kubernetes.io/component: horizon
+      app.kubernetes.io/part-of: microblog
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: microblog-horizon
+        app.kubernetes.io/component: horizon
+        app.kubernetes.io/part-of: microblog
+    spec:
+      containers:
+        - name: microblog-horizon
+          image: registry.digitalocean.com/shark-fyi/microblog-php:latest
+          command:
+            - php
+            - artisan
+            - horizon
+          volumeMounts:
+            - name: dot-env
+              mountPath: /app/.env
+              subPath: .env
+              readOnly: true
+      volumes:
+        - name: dot-env
+          secret:
+            secretName: microblog
+      imagePullSecrets:
+        - name: registry-shark-fyi
+
+---
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -182,6 +166,11 @@ spec:
   successfulJobsHistoryLimit: 3
   jobTemplate:
     spec:
+      metadata:
+        labels:
+          app.kubernetes.io/name: microblog-scheduler
+          app.kubernetes.io/component: scheduler
+          app.kubernetes.io/part-of: microblog
       template:
         spec:
           restartPolicy: Never
@@ -197,10 +186,6 @@ spec:
                   mountPath: /app/.env
                   subPath: .env
                   readOnly: true
-              # resources:
-              #   requests:
-              #     memory: 250Mi
-              #     cpu: 250m
           volumes:
             - name: dot-env
               secret:
