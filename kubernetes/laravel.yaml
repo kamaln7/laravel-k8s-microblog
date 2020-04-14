@@ -133,7 +133,7 @@ spec:
         app.kubernetes.io/part-of: microblog
     spec:
       containers:
-        - name: microblog-horizon
+        - name: horizon
           image: registry.digitalocean.com/shark-fyi/microblog-php:latest
           command:
             - php
@@ -175,7 +175,7 @@ spec:
         spec:
           restartPolicy: Never
           containers:
-            - name: microblog-horizon
+            - name: scheduler
               image: registry.digitalocean.com/shark-fyi/microblog-php:latest
               command:
                 - php
