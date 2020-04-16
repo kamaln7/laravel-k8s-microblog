@@ -38,20 +38,21 @@ class AttachPhotoToPost implements ShouldQueue
         $hash = $this->post->photoHash();
         $filename = $this->post->photoFilename();
 
-        // check if the photo already exists
-        if (Storage::exists($filename)) {
-            return;
+        // download a photo if one with the same filename doesn't exist already
+        if (!Storage::exists($filename)) {
+            // get a random photo from picsum
+            $url = "https://picsum.photos/seed/{$hash}/128";
+            $image = file_get_contents($url);
+            Storage::put($filename, $image, 'public');
+            info("Downloaded new photo [{$url}]; post_id={$this->post->id}");
+        } else {
+            info("Using existing photo [{$filename}]; post_id={$this->post->id}");
         }
-
-        // get a random photo from picsum
-        $url = "https://picsum.photos/seed/{$hash}/128";
-        $image = file_get_contents($url);
-        Storage::put($filename, $image, 'public');
         
         // store the new photo in the database
         $this->post->photo = $filename;
         $this->post->save();
 
-        info("Attached photo [{$url}] to Post #{$this->post->id}.");
+        info("Attached photo [{$filename}]; post_id={$this->post->id}");
     }
 }
