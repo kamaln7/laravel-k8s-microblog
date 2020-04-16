@@ -165,12 +165,12 @@ spec:
   failedJobsHistoryLimit: 10
   successfulJobsHistoryLimit: 3
   jobTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/name: microblog-scheduler
+        app.kubernetes.io/component: scheduler
+        app.kubernetes.io/part-of: microblog
     spec:
-      metadata:
-        labels:
-          app.kubernetes.io/name: microblog-scheduler
-          app.kubernetes.io/component: scheduler
-          app.kubernetes.io/part-of: microblog
       template:
         spec:
           restartPolicy: Never
