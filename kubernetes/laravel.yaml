@@ -23,15 +23,13 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: registry.digitalocean.com/shark-fyi/microblog-nginx:latest
+          image: kamaln7/microblog-nginx:latest
           ports:
             - containerPort: 80
           readinessProbe:
             httpGet:
               path: /healthz/nginx
               port: 80
-      imagePullSecrets:
-        - name: registry-shark-fyi
 
 ---
 apiVersion: apps/v1
@@ -58,7 +56,7 @@ spec:
     spec:
       containers:
         - name: fpm
-          image: registry.digitalocean.com/shark-fyi/microblog-php:latest
+          image: kamaln7/microblog-php:latest
           ports:
             - containerPort: 9000
           volumeMounts:
@@ -70,8 +68,6 @@ spec:
         - name: dot-env
           secret:
             secretName: microblog
-      imagePullSecrets:
-        - name: registry-shark-fyi
 
 ---
 apiVersion: v1
@@ -134,7 +130,7 @@ spec:
     spec:
       containers:
         - name: horizon
-          image: registry.digitalocean.com/shark-fyi/microblog-php:latest
+          image: kamaln7/microblog-php:latest
           command:
             - php
             - artisan
@@ -148,8 +144,6 @@ spec:
         - name: dot-env
           secret:
             secretName: microblog
-      imagePullSecrets:
-        - name: registry-shark-fyi
 
 ---
 apiVersion: batch/v1beta1
@@ -176,7 +170,7 @@ spec:
           restartPolicy: Never
           containers:
             - name: scheduler
-              image: registry.digitalocean.com/shark-fyi/microblog-php:latest
+              image: kamaln7/microblog-php:latest
               command:
                 - php
                 - artisan
@@ -190,5 +184,4 @@ spec:
             - name: dot-env
               secret:
                 secretName: microblog
-          imagePullSecrets:
-            - name: registry-shark-fyi
+           - name: registry-shark-fyi

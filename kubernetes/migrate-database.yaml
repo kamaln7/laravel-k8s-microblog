@@ -10,8 +10,8 @@ metadata:
 spec:
   restartPolicy: Never
   containers:
-    - name: microblog-migrate
-      image: registry.digitalocean.com/shark-fyi/microblog-php:latest
+    - name: migrate
+      image: kamaln7/microblog-php:latest
       command:
         - php
         - artisan
@@ -26,5 +26,3 @@ spec:
     - name: dot-env
       secret:
         secretName: microblog
-  imagePullSecrets:
-    - name: registry-shark-fyi
