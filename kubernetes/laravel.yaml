@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: kamaln7/microblog-nginx:latest
+          image: kamaln7/microblog-nginx:1.0.0
           ports:
             - containerPort: 80
           readinessProbe:
@@ -56,7 +56,7 @@ spec:
     spec:
       containers:
         - name: fpm
-          image: kamaln7/microblog-php:latest
+          image: kamaln7/microblog-php:1.0.0
           ports:
             - containerPort: 9000
           volumeMounts:
@@ -94,6 +94,10 @@ metadata:
     service.beta.kubernetes.io/do-loadbalancer-healthcheck-port: "80"
     service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol: "http"
     service.beta.kubernetes.io/do-loadbalancer-healthcheck-path: "/healthz/nginx"
+    service.beta.kubernetes.io/do-loadbalancer-http2-ports: "443"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "d20a66d1-35af-4bc8-95c9-e4621d88cc18"
+    service.beta.kubernetes.io/do-loadbalancer-hostname: "example.com"
+    service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: "true"
 spec:
   selector:
     app.kubernetes.io/name: microblog-nginx
@@ -101,8 +105,13 @@ spec:
     app.kubernetes.io/part-of: microblog
   type: LoadBalancer
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 80
+      targetPort: 80
+    - name: http2
+      protocol: TCP
+      port: 443
       targetPort: 80
 
 ---
@@ -130,7 +139,7 @@ spec:
     spec:
       containers:
         - name: horizon
-          image: kamaln7/microblog-php:latest
+          image: kamaln7/microblog-php:1.0.0
           command:
             - php
             - artisan
@@ -170,7 +179,7 @@ spec:
           restartPolicy: Never
           containers:
             - name: scheduler
-              image: kamaln7/microblog-php:latest
+              image: kamaln7/microblog-php:1.0.0
               command:
                 - php
                 - artisan
