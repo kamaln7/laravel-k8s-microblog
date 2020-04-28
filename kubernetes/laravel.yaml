@@ -193,4 +193,3 @@ spec:
             - name: dot-env
               secret:
                 secretName: microblog
-           - name: registry-shark-fyi
